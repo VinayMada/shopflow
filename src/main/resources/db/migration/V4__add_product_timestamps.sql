@@ -1,0 +1,1 @@
+alter table products add column created_at TIMESTAMP NOT NULL DEFAULT NOW();
