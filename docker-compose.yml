@@ -1,0 +1,10 @@
+services:
+  shopflow-db:
+    image: postgres:15-alpine
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: shopflow
+      POSTGRES_USER: shopflow
+      POSTGRES_PASSWORD: shopflow
+    restart: unless-stopped

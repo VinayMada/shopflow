@@ -1,0 +1,13 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: shopflow
+  jpa:
+    open-in-view: false
+shopflow:
+  app-name: ShopFlow API
+  version: 1.0.0
+  max-page-size: 50
+  jwt-secret: J+93TeyIx9BeXXsoN0zRzh7j9EGWUfrOounuaXzR64g=
+  jwt-expiration-ms: 86400000

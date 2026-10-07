@@ -1,0 +1,16 @@
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+.idea/
+*.iml
+.vscode/
+*.swp
+
+*.log
+logs/
+
+.env
+application-local.yml
