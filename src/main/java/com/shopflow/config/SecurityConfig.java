@@ -35,7 +35,7 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable());
         http.sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**", "/api/health","/error").permitAll()
+                .requestMatchers("/api/auth/**", "/api/health", "/error", "/", "/index.html").permitAll()
                 .anyRequest().authenticated()
         );
         http.exceptionHandling(ex -> ex.authenticationEntryPoint(
