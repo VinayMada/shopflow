@@ -1,5 +1,7 @@
 package com.shopflow.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -7,6 +9,7 @@ import java.util.List;
 
 @Entity
 @Table(name="categories")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Category {
 
     @Id
@@ -18,6 +21,7 @@ public class Category {
 
     private String description;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Product> products = new ArrayList<>();
 
