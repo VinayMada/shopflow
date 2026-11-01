@@ -12,6 +12,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/api/cart")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class CartController {
 
     private final CartService cartService;

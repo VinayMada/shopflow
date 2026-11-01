@@ -13,6 +13,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/api/orders")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class OrderController {
 
     private final OrderService orderService;
