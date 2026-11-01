@@ -8,6 +8,9 @@ import com.shopflow.entity.Product;
 import com.shopflow.exception.ResourceNotFoundException;
 import com.shopflow.repository.CategoryRepository;
 import com.shopflow.repository.ProductRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -41,6 +44,7 @@ public class ProductService {
         return toResponse(product);
     }
 
+    @Cacheable(value = "products", key = "#id")
     public ProductResponse findById(Long id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
         return toResponse(product);
@@ -61,6 +65,7 @@ public class ProductService {
     }
 
 
+    @CachePut(value = "products", key = "#id")
     public ProductResponse update(Long id, ProductRequest productRequest) {
         Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
@@ -75,6 +80,7 @@ public class ProductService {
         return toResponse(product);
     }
 
+    @CacheEvict(value = "products", key = "#id")
     public void delete(Long id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
         productRepository.delete(product);

@@ -5,6 +5,10 @@ spring:
     name: shopflow
   jpa:
     open-in-view: false
+  data:
+    redis:
+      host: localhost
+      port: 6379
 shopflow:
   app-name: ShopFlow API
   version: 1.0.0
