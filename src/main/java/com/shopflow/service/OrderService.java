@@ -4,6 +4,7 @@ import com.shopflow.dto.OrderResponse;
 import com.shopflow.entity.*;
 import com.shopflow.repository.CartRepository;
 import com.shopflow.repository.OrderRepository;
+import com.shopflow.repository.ProductRepository;
 import com.shopflow.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -18,11 +19,13 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
+    private final ProductRepository productRepository;
 
-    public OrderService(OrderRepository orderRepository, CartRepository cartRepository, UserRepository userRepository) {
+    public OrderService(OrderRepository orderRepository, CartRepository cartRepository, UserRepository userRepository, ProductRepository productRepository) {
         this.orderRepository = orderRepository;
         this.cartRepository = cartRepository;
         this.userRepository = userRepository;
+        this.productRepository = productRepository;
     }
 
     @Transactional
@@ -37,9 +40,16 @@ public class OrderService {
         order.setOrderStatus(OrderStatus.PENDING);
         BigDecimal totalPrice = BigDecimal.ZERO;
         for(CartItem item : cart.getItems()){
+            if(item.getQuantity() > item.getProduct().getStock()){
+                throw new IllegalStateException("Insufficient stock for: " + item.getProduct().getName());
+            }
             OrderItem orderItem = new OrderItem(order,item.getProduct().getId(),item.getProduct().getName(),item.getProduct().getPrice(),item.getQuantity());
             order.getItems().add(orderItem);
             totalPrice = totalPrice.add(orderItem.getPriceAtPurchase().multiply(BigDecimal.valueOf(orderItem.getQuantity())));
+
+            Product product = item.getProduct();
+            product.setStock(product.getStock() - item.getQuantity());
+            productRepository.save(product);
         }
         order.setTotalAmount(totalPrice);
         orderRepository.save(order);
