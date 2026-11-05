@@ -1,5 +1,7 @@
 package com.shopflow.entity;
 
+import com.shopflow.dto.OrderItemResponse;
+import com.shopflow.dto.OrderResponse;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -29,6 +31,14 @@ public class Order {
 
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<OrderItem> items = new ArrayList<>();
+
+    public OrderResponse toOrderResponse() {
+        List<OrderItemResponse> orderItems = new ArrayList<>();
+        for(OrderItem orderItem : this.items) {
+            orderItems.add(orderItem.toOrderItemResponse());
+        }
+        return new OrderResponse(this.id,this.orderStatus.name(),this.totalAmount,this.createdAt,orderItems);
+    }
 
     public Long getId() {
         return id;

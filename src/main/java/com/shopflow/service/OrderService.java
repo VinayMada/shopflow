@@ -1,5 +1,6 @@
 package com.shopflow.service;
 
+import com.shopflow.dto.OrderResponse;
 import com.shopflow.entity.*;
 import com.shopflow.repository.CartRepository;
 import com.shopflow.repository.OrderRepository;
@@ -8,6 +9,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class OrderService {
@@ -75,5 +78,15 @@ public class OrderService {
         order.setOrderStatus(newStatus);
         orderRepository.save(order);
         return order;
+    }
+
+    @Transactional
+    public List<OrderResponse> getOrders(Long userId) {
+        List<Order> orders = orderRepository.findByUserId(userId);
+        List<OrderResponse> orderResponses = new ArrayList<>();
+        for (Order order : orders) {
+            orderResponses.add(order.toOrderResponse());
+        }
+        return orderResponses;
     }
 }

@@ -1,5 +1,6 @@
 package com.shopflow.controller;
 
+import com.shopflow.dto.OrderResponse;
 import com.shopflow.entity.Order;
 import com.shopflow.entity.OrderStatus;
 import com.shopflow.entity.User;
@@ -10,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -35,6 +37,12 @@ public class OrderController {
     public ResponseEntity<Order> updateOrderStatus(@PathVariable Long orderId, @RequestParam OrderStatus status) {
         Order order = orderService.updateStatus(orderId, status);
         return ResponseEntity.ok().body(order);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<OrderResponse>> getAllOrders() {
+        List<OrderResponse> orders = orderService.getOrders(getUserId());
+        return ResponseEntity.ok().body(orders);
     }
 
     private Long getUserId() {

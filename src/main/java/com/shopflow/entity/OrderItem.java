@@ -1,6 +1,7 @@
 package com.shopflow.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.shopflow.dto.OrderItemResponse;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -34,6 +35,10 @@ public class OrderItem {
         this.productName = productName;
         this.priceAtPurchase = priceAtPurchase;
         this.quantity = quantity;
+    }
+
+    public OrderItemResponse toOrderItemResponse() {
+        return new OrderItemResponse(this.id, this.productName, this.quantity, this.priceAtPurchase, BigDecimal.valueOf(this.quantity).multiply(priceAtPurchase));
     }
 
     public Long getId() {
