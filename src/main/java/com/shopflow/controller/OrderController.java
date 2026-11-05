@@ -7,6 +7,7 @@ import com.shopflow.entity.User;
 import com.shopflow.repository.UserRepository;
 import com.shopflow.service.OrderService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +35,7 @@ public class OrderController {
     }
 
     @PatchMapping("/{orderId}/status")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Order> updateOrderStatus(@PathVariable Long orderId, @RequestParam OrderStatus status) {
         Order order = orderService.updateStatus(orderId, status);
         return ResponseEntity.ok().body(order);
