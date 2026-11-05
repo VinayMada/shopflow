@@ -334,6 +334,15 @@
       padding-top: .8rem; border-top: 1px solid var(--border);
       font-weight: 700;
     }
+    .order-date { font-size: .75rem; color: var(--muted); margin-top: .15rem; }
+    .cancel-order-btn {
+      margin-top: .9rem; width: 100%;
+      background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.3);
+      color: var(--danger); font: inherit; font-size: .8rem; font-weight: 600;
+      padding: .5rem; border-radius: 8px; cursor: pointer;
+      transition: background .2s, border-color .2s;
+    }
+    .cancel-order-btn:hover { background: rgba(239,68,68,.16); border-color: rgba(239,68,68,.5); }
 
     /* ── AUTH MODAL ── */
     .modal-overlay {
@@ -829,6 +838,7 @@ async function placeOrder() {
     closeCart();
     toast('Order placed successfully! 🎉', 'success');
     await loadCart();
+    showView('orders');
   } catch(e) {
     toast(e.message, 'error');
   }
@@ -852,7 +862,10 @@ async function loadOrders() {
     el.innerHTML = orders.map(o => `
       <div class="order-card">
         <div class="order-header">
-          <div class="order-id">Order <span>#${o.id}</span></div>
+          <div>
+            <div class="order-id">Order <span>#${o.id}</span></div>
+            <div class="order-date">${fmtDate(o.createdAt)}</div>
+          </div>
           <span class="status-badge status-${o.status}">${o.status}</span>
         </div>
         <div class="order-items-list">
@@ -866,10 +879,21 @@ async function loadOrders() {
           <span>Total</span>
           <span>₹${fmt(o.totalAmount || 0)}</span>
         </div>
+        ${(o.status === 'PENDING' || o.status === 'CONFIRMED') ? `
+          <button class="cancel-order-btn" onclick="cancelOrder(${o.id})">Cancel Order</button>` : ''}
       </div>`).join('');
   } catch(e) {
     el.innerHTML = `<div class="empty-state"><p>Could not load orders: ${e.message}</p></div>`;
   }
+}
+
+async function cancelOrder(id) {
+  if (!confirm('Cancel this order?')) return;
+  try {
+    await api(`/orders/${id}/status?status=CANCELLED`, { method: 'PATCH' });
+    toast('Order cancelled', 'success');
+    loadOrders();
+  } catch(e) { toast(e.message, 'error'); }
 }
 
 // ── TOAST ─────────────────────────────────────────────────────────────────────
@@ -887,6 +911,10 @@ function esc(s) {
 }
 function fmt(n) {
   return Number(n).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function fmtDate(dt) {
+  if (!dt) return '';
+  return new Date(dt).toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 
 // ── KEYBOARD ─────────────────────────────────────────────────────────────────
