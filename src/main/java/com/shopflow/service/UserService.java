@@ -5,6 +5,7 @@ import com.shopflow.dto.LoginRequest;
 import com.shopflow.dto.RegisterRequest;
 import com.shopflow.entity.Role;
 import com.shopflow.entity.User;
+import com.shopflow.exception.InvalidCredentialsException;
 import com.shopflow.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -35,9 +36,9 @@ public class UserService {
     }
 
     public AuthResponse login(LoginRequest loginRequest) {
-        User user = userRepository.findByEmail(loginRequest.email()).orElseThrow(() -> new RuntimeException("Invalid credentials"));
+        User user = userRepository.findByEmail(loginRequest.email()).orElseThrow(InvalidCredentialsException::new);
         if (!passwordEncoder.matches(loginRequest.password(), user.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
+            throw new InvalidCredentialsException();
         }
         return new AuthResponse(jwtService.generateToken(user.getEmail()));
     }

@@ -35,14 +35,23 @@ class AuthIntegrationTest {
     }
 
     @Test
-    void login_shouldFail_withWrongPassword() {
+    void login_shouldReturn401_withWrongPassword() {
         String email = uniqueEmail();
         restTemplate.postForEntity("/api/auth/register", new RegisterRequest(email, "secret123"), AuthResponse.class);
 
         ResponseEntity<String> response = restTemplate.postForEntity(
                 "/api/auth/login", new LoginRequest(email, "wrong-password"), String.class);
 
-        assertThat(response.getStatusCode().is2xxSuccessful()).isFalse();
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+        assertThat(response.getBody()).contains("Invalid credentials");
+    }
+
+    @Test
+    void login_shouldReturn401_withUnknownEmail() {
+        ResponseEntity<String> response = restTemplate.postForEntity(
+                "/api/auth/login", new LoginRequest(uniqueEmail(), "secret123"), String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
         assertThat(response.getBody()).contains("Invalid credentials");
     }
 
